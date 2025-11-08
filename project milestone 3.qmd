@@ -18,13 +18,13 @@ The sim_novelid_CA.csv file and sim_novelid_LACounty.csv file together represent
 
     -   Select demographic and geographic strata (s) of interest
 
-    -   Aggregate the data into a new dataframe to  include only one row per strata of interest
+    -   Aggregate the data into a new dataframe to include only one row per strata of interest
 
 -   Population dataset
 
     -   Recode values to be consistent with morbidity datasets so they can be joined
 
-    -   Select demographic or geogrphic strata(s) of interest
+    -   Select demographic or geographic strata(s) of interest
 
     -   Create a rate metric and summarize to include only one row per strata of interest
 
@@ -71,13 +71,115 @@ For all scenarios, please turn in an html document created from an Rmd or Qmd wi
     -   Use of headers and sub headers to create an organized document
 
 ```{r}
-library(janitor)
 library(tidyverse)
+library(janitor)
+ca_pop <- read_csv("ca_pop_2023.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_CA <- read_csv("sim_novelid_CA.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_LA <- read_csv("sim_novelid_LACounty.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+sim_CA <- sim_CA %>% clean_names()
+sim_LA <- sim_LA %>% clean_names()
+```
+
+```{r}
+sim_LA <- sim_LA %>%
+  rename(dt_diagnosis = dt_dx,
+    age_cat = age_category,
+    race_ethnicity = race_eth,
+    new_infections = dx_new,
+    cumulative_infected = infected_cumulative,
+    new_unrecovered = unrecovered_new,
+    cumulative_unrecovered = unrecovered_cumulative,
+    new_severe = severe_new,
+    cumulative_severe = severe_cumulative)
+
+```
+
+```{r}
+sim_CA <- sim_CA %>%
+  mutate(dt_diagnosis = as.Date(dt_diagnosis))
+
+sim_LA <- sim_LA %>%
+  mutate(dt_diagnosis = as.Date(dt_diagnosis, format = "%d%b%Y"))
+```
+
+```{r}
+sim_CA <- sim_CA %>%
+  mutate(
+    race_ethnicity = case_when(
+      race_ethnicity == 1 ~ "White, Non-Hispanic",
+      race_ethnicity == 2 ~ "Black, Non-Hispanic",
+      race_ethnicity == 3 ~ "American Indian or Alaska Native, Non-Hispanic",
+      race_ethnicity == 4 ~ "Asian, Non-Hispanic",
+      race_ethnicity == 5 ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+      race_ethnicity == 6 ~ "Multiracial (two or more of above races), Non-Hispanic",
+      race_ethnicity == 7 ~ "Hispanic (any race)",
+      TRUE ~ NA_character_))
+
+```
+
+```{r}
+names(sim_CA)
+```
+
+```{r}
+names(sim_LA)
+
+```
+
+```{r}
+sim_LA <- sim_LA %>%
+  select(-dt_report)
+```
+
+```{r}
+sim_LA <- sim_LA %>%
+  mutate(county = "Los Angeles County")
+```
+
+```{r}
+sim_CA <- sim_CA %>%
+  mutate(week_of_diagnosis_2023 = time_int %% 100) %>%
+  select(-time_int)
+```
+
+```{r}
 library(dplyr)
-ca_pop <- read_csv("/home/rstudio/PH251w-Group/ca_pop_2023.csv",
-                   na = c("NA", "N/A", "", "null", "-"))
-sim_CA <- read_csv("/home/rstudio/PH251w-Group/sim_novelid_CA.csv",
-                   na = c("NA", "N/A", "", "null", "-"))
-sim_LA <- read_csv("/home/rstudio/PH251w-Group/sim_novelid_LACounty.csv",
-                   na = c("NA", "N/A", "", "null", "-"))
+combined_data <- bind_rows(sim_CA, sim_LA)
+view(combined_data)
+```
+
+```{r}
+unique(sim_CA$county)
+unique(sim_CA$age_cat)
+```
+
+**Demographic group of interest:** Adults aged 65 years and older (≥65 years)\
+**Geographic stratum of interest:** San Francisco County
+
+```{r}
+data_of_interest <- combined_data %>%
+  filter(county == "San Francisco County", age_cat == "65+")
+view(data_of_interest)
+```
+
+```{r}
+data_of_interest <- data_of_interest %>%
+  group_by(sex, race_ethnicity) %>%
+  summarise( total_new_infections  = sum(new_infections,  na.rm = TRUE),
+    total_new_unrecovered = sum(new_unrecovered, na.rm = TRUE),
+    total_new_severe      = sum(new_severe,      na.rm = TRUE),
+    peak_new_infections   = max(new_infections,  na.rm = TRUE),
+    peak_week_2023        = week_of_diagnosis_2023[which.max(new_infections)],
+    .groups = "drop"
+  ) %>%
+  mutate(pct_severe = if_else( total_new_infections > 0, total_new_severe / total_new_infections, NA_real_))
 ```
