@@ -6,7 +6,7 @@ editor: visual
 
 ## **Milestone #3 Details**
 
-#### **For Scenario 1: Infectious disease outbreak (simulated) in California**
+#### **For Scenario 1: Infectious disease outbreak (simulated) in California - 2023**
 
 The sim_novelid_CA.csv file and sim_novelid_LACounty.csv file together represent simulated morbidity for the entire state of California. While it’s certainly possible for data from different sources to adhere to a format standard, one of the challenges of working with secondary data is that it often does not work out that way. Therefore to prepare each dataset (milestone #3) so that they can be combined into one, whole state, dataset you will need to do the following:
 
