@@ -4,23 +4,80 @@ format: html
 editor: visual
 ---
 
-## Quarto (Jason/Juliana/Daniel)
+## **Milestone #3 Details**
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+#### **For Scenario 1: Infectious disease outbreak (simulated) in California**
 
-## Running Code
+The sim_novelid_CA.csv file and sim_novelid_LACounty.csv file together represent simulated morbidity for the entire state of California. While it’s certainly possible for data from different sources to adhere to a format standard, one of the challenges of working with secondary data is that it often does not work out that way. Therefore to prepare each dataset (milestone #3) so that they can be combined into one, whole state, dataset you will need to do the following:
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+-   Morbidity datasets (from CA and LA County)
+
+    -   Recode column names, values, or formats that are in discordant (dates, etc)
+
+    -   Combine morbidity datasets into a single dataset
+
+    -   Select demographic and geographic strata (s) of interest
+
+    -   Aggregate the data into a new dataframe to  include only one row per strata of interest
+
+-   Population dataset
+
+    -   Recode values to be consistent with morbidity datasets so they can be joined
+
+    -   Select demographic or geogrphic strata(s) of interest
+
+    -   Create a rate metric and summarize to include only one row per strata of interest
+
+For all scenarios, please turn in an html document created from an Rmd or Qmd with the following components:
+
+-   Subset rows or columns, as needed
+
+-   Create new variables needed for analysis (minimum 2)
+
+    -   New variables should be created based on existing columns; for example
+
+        -   Calculating a rate
+
+        -   Combining character strings
+
+        -   Aggregation
+
+-   Clean variables needed for analysis (minimum 2)
+
+    -   Examples
+
+        -   Recode invalid values
+
+        -   Handle missing data
+
+        -   Recode categories
+
+-   Data re-structured as needed (aggregated/summarized and/or pivoted)
+
+-   Data dictionary based on clean dataset (minimum 4 data elements), including:
+
+    -   Variable name
+
+    -   Data type
+
+    -   Description
+
+-   One or more tables with descriptive statistics for 4 data elements
+
+-   Html output that is professionally prepared for presentation
+
+    -   Only the necessary information is outputted (you should suppress, for example, entire data frame outputs)
+
+    -   Use of headers and sub headers to create an organized document
 
 ```{r}
-
+library(janitor)
+library(tidyverse)
+library(dplyr)
+ca_pop <- read_csv("/home/rstudio/PH251w-Group/ca_pop_2023.csv",
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_CA <- read_csv("/home/rstudio/PH251w-Group/sim_novelid_CA.csv",
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_LA <- read_csv("/home/rstudio/PH251w-Group/sim_novelid_LACounty.csv",
+                   na = c("NA", "N/A", "", "null", "-"))
 ```
-
-You can add options to executable code like this
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
