@@ -71,6 +71,7 @@ For all scenarios, please turn in an html document created from an Rmd or Qmd wi
     -   Use of headers and sub headers to create an organized document
 
 ```{r}
+#load in datasets/libraries
 library(tidyverse)
 library(janitor)
 ca_pop <- read_csv("ca_pop_2023.csv", 
@@ -82,14 +83,17 @@ sim_LA <- read_csv("sim_novelid_LACounty.csv",
 
 ```
 
+Morbidity datasets (from CA and LA County)
+
+-   Recode column names, values, or formats that are in discordant (dates, etc)
+
 ```{r}
-library(tidyverse)
-library(janitor)
 sim_CA <- sim_CA %>% clean_names()
 sim_LA <- sim_LA %>% clean_names()
 ```
 
 ```{r}
+
 sim_LA <- sim_LA %>%
   rename(dt_diagnosis = dt_dx,
     age_cat = age_category,
@@ -151,6 +155,8 @@ sim_CA <- sim_CA %>%
   select(-time_int)
 ```
 
+-   Combine morbidity datasets into a single dataset
+
 ```{r}
 library(dplyr)
 combined_data <- bind_rows(sim_CA, sim_LA)
@@ -162,6 +168,8 @@ unique(sim_CA$county)
 unique(sim_CA$age_cat)
 ```
 
+Select demographic and geographic strata (s) of interest:
+
 **Demographic group of interest:** Adults aged 65 years and older (≥65 years)\
 **Geographic stratum of interest:** San Francisco County
 
@@ -170,6 +178,8 @@ data_of_interest <- combined_data %>%
   filter(county == "San Francisco County", age_cat == "65+")
 view(data_of_interest)
 ```
+
+-   Aggregate the data into a new dataframe to include only one row per strata of interest
 
 ```{r}
 data_of_interest <- data_of_interest %>%
@@ -182,4 +192,52 @@ data_of_interest <- data_of_interest %>%
     .groups = "drop"
   ) %>%
   mutate(pct_severe = if_else( total_new_infections > 0, total_new_severe / total_new_infections, NA_real_))
+```
+
+-   Population dataset
+
+    ```{r}
+    ca_pop <- ca_pop %>% clean_names()
+    ```
+
+    -   Recode values to be consistent with morbidity datasets so they can be joined
+
+    ```{r}
+    ca_pop <- ca_pop %>%
+      rename(race_ethnicity = race7
+        )
+    ```
+
+    ```{r}
+    ca_pop <- ca_pop %>%
+      mutate(
+        race_ethnicity = case_when(
+          race_ethnicity == "WhiteTE NH" ~ "White, Non-Hispanic",
+          race_ethnicity == "Black NH" ~ "Black, Non-Hispanic",
+          race_ethnicity == "AIAN NH" ~ "American Indian or Alaska Native, Non-Hispanic",
+          race_ethnicity == "Asian NH" ~ "Asian, Non-Hispanic",
+          race_ethnicity == "NHPI NH" ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+          race_ethnicity == "MR NH" ~ "Multiracial (two or more of above races), Non-Hispanic",
+          race_ethnicity == "Hispanic" ~ "Hispanic (any race)",
+          TRUE ~ NA_character_))
+    ```
+
+    -   Select demographic or geogrphic strata(s) of interest
+
+    **Demographic group of interest:** Adults aged 65 years and older (≥65 years)\
+    **Geographic stratum of interest:** San Francisco County
+
+    ```{r}
+    ca_pop_focus <- ca_pop %>%
+      filter(county == "San Francisco", age_cat == "65+")
+    view(ca_pop_focus)
+    ```
+
+    -   Create a rate metric and summarize to include only one row per strata of interest
+
+```{r}
+ca_pop_focus <- ca_pop_focus %>%
+  group_by(sex, race_ethnicity) %>% 
+  summarize(sum_pop = sum(pop, na.rm = TRUE), .groups = "drop")
+
 ```
