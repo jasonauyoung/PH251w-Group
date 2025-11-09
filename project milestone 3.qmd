@@ -230,7 +230,6 @@ data_of_interest <- data_of_interest %>%
     ```{r}
     ca_pop_focus <- ca_pop %>%
       filter(county == "San Francisco", age_cat == "65+")
-    view(ca_pop_focus)
     ```
 
     -   Create a rate metric and summarize to include only one row per strata of interest
@@ -240,4 +239,37 @@ ca_pop_focus <- ca_pop_focus %>%
   group_by(sex, race_ethnicity) %>% 
   summarize(sum_pop = sum(pop, na.rm = TRUE), .groups = "drop")
 
+```
+
+```{r}
+library(tibble)
+library(knitr)
+
+data_dictionary <- tibble(
+  variable_name = names(data_of_interest),
+  data_type = sapply(data_of_interest, class),
+  description = c(
+    "Biological sex of the individual.",
+    "Race and ethnicity category.",
+    "Total number of new infections reported for that sex and race/ethnicity group.",
+    "Total number of cases that remain unrecovered among the new infections.",
+    "Total number of new severe cases among the new infections.",
+    "Number of new infections recorded during the peak week of 2023.",
+    "Week number of 2023 when the infection count reached its peak for the subgroup.",
+    "Proportion of new severe cases among all new infections."
+  )
+)
+```
+
+```{r}
+data_plot <- data_of_interest %>%
+  mutate(race_ethnicity = reorder(race_ethnicity, total_new_infections))
+
+ggplot(data_plot,
+       aes(x = race_ethnicity, y = total_new_infections, fill = sex)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(title = "Total New Infections by Race/Ethnicity and Sex",
+       x = "Race/Ethnicity", y = "Total New Infections", fill = "Sex") +
+  coord_flip() +
+  theme_minimal(base_size = 12)
 ```
