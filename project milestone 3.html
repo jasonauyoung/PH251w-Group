@@ -321,7 +321,9 @@ lgl (1): DT_REPORT
 <pre><code>[1] "0-17"  "18-49" "50-64" "65+"  </code></pre>
 </div>
 </div>
-<p>Select demographic and geographic strata (s) of interest:</p>
+<ul>
+<li>Select demographic and geographic strata (s) of interest:</li>
+</ul>
 <p><strong>Demographic group of interest:</strong> Adults aged 65 years and older (≥65 years)<br>
 <strong>Geographic stratum of interest:</strong> San Francisco County</p>
 <div class="cell">
@@ -332,6 +334,7 @@ lgl (1): DT_REPORT
 <ul>
 <li>Aggregate the data into a new dataframe to include only one row per strata of interest</li>
 </ul>
+<p>The stratum of interest included adults aged 65 years and older in San Francisco County. Because the analysis window was fixed to 2023, the variable week_of_diagnosis_2023 was derived from the original time_int to capture incidence across the weeks of follow-up. The data were grouped by sex and race/ethnicity, and new infections, unrecovered, and severe cases were summarized using sums. The proportion of severe cases was then calculated, and the week with the highest number of new infections was identified to highlight the outbreak’s peak intensity.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>data_of_interest <span class="ot">&lt;-</span> data_of_interest <span class="sc">%&gt;%</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sex, race_ethnicity) <span class="sc">%&gt;%</span></span>

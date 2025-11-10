@@ -168,7 +168,7 @@ unique(sim_CA$county)
 unique(sim_CA$age_cat)
 ```
 
-Select demographic and geographic strata (s) of interest:
+-   Select demographic and geographic strata (s) of interest:
 
 **Demographic group of interest:** Adults aged 65 years and older (≥65 years)\
 **Geographic stratum of interest:** San Francisco County
@@ -180,6 +180,8 @@ view(data_of_interest)
 ```
 
 -   Aggregate the data into a new dataframe to include only one row per strata of interest
+
+The stratum of interest included adults aged 65 years and older in San Francisco County. Because the analysis window was fixed to 2023, the variable week_of_diagnosis_2023 was derived from the original time_int to capture incidence across the weeks of follow-up. The data were grouped by sex and race/ethnicity, and new infections, unrecovered, and severe cases were summarized using sums. The proportion of severe cases was then calculated, and the week with the highest number of new infections was identified to highlight the outbreak’s peak intensity.
 
 ```{r}
 data_of_interest <- data_of_interest %>%
