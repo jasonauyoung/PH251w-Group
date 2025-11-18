@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -96,26 +62,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="milestone-4-objective" class="level2">
+<h2 class="anchored" data-anchor-id="milestone-4-objective"><strong>Milestone #4 Objective</strong></h2>
+<p>Visualizations complete.</p>
+<section id="milestone-4-details" class="level4">
+<h4 class="anchored" data-anchor-id="milestone-4-details"><strong>Milestone #4 Details</strong></h4>
+<p>Please submit an Rmd or Qmd and publish an html file on RPubs with the following:</p>
+<ol type="1">
+<li><p>Final datasets for creation of visualization</p>
+<ul>
+<li><p>Join all datasets together</p></li>
+<li><p>Calculate any remaining data elements needed for analysis</p></li>
+<li><p>Show code used to create joined dataset, but please do not print full data frame output (showing data structure with <code>str()</code> is okay)</p></li>
+</ul></li>
+<li><p>Visualizations (at least one per group member)</p>
+<ul>
+<li><p>One print quality table as requested in scenario</p></li>
+<li><p>One print quality plot or chart as requested in scenario</p></li>
+<li><p>For groups of 3, one additional print quality table or plot of your choice (can support the requested data in the scenario, or answer a different question using the same data sources)</p></li>
+</ul></li>
+<li><p>For each visual, include</p>
+<ul>
+<li><p>Code used to generate visual</p></li>
+<li><p>Legend (if necessary)</p></li>
+<li><p>1-2 sentence interpretation</p></li>
+<li><p>NOTE:</p>
+<ul>
+<li><p>Please make sure the visual can stand-alone, meaning it includes enough information in title, legend, and footnote so that a person who sees only the visualization could understand what is being presented.</p></li>
+<li><p>Please also make sure column names, axis labels, and any other labels are meaningful and not just the name of the variable (ex: “County” rather than “county_name”)</p></li>
+</ul></li>
+</ul></li>
+<li><p>Html file that is professionally prepared for presentation and published to RPubs</p>
+<ul>
+<li><p>Only the necessary information is in the output (e.g., suppress entire data frame outputs but showing data structure with <code>str()</code> is okay.</p></li>
+<li><p>Code used to import and clean data (milestones 2 and 3) can be included in the rmd/qmd but please use the option include=FALSE in order to prevent the code and any output from. Code chunk would look like <code style="font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;">{r chunk_name, include=FALSE}</code></p></li>
+<li><p>Utilize <code style="font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;">warning=FALSE</code> and <code style="font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;">message=FALSE</code> to suppress any warnings/messages that may be displaying from any chunks</p></li>
+<li><p>For this milestone please make sure code for visualizations are included in the final file. Show your work by “echoing” code used in Rmd/Qmd file to create your tables and graphs. ```{r, echo = TRUE} in code chunk preferences.</p></li>
+<li><p>Use headers and sub headers to create an organized document</p></li>
+<li><p>Make sure you commit and push your rsconnect folder! <a href="https://docs.google.com/document/d/1JSg5JUEI3JDD_rPAlAaVPno0MlUGQ6W_cyBvn6Ud1xs/edit?usp=sharing">Read more details here.Links to an external site.</a></p></li>
+</ul></li>
+</ol>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
-<p>You can add options to executable code like this</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
-</div>
-</div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
 </section>
 
 </main>
