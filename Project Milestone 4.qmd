@@ -4,54 +4,23 @@ format: html
 editor: visual
 ---
 
-## **Milestone #4 Objective**
+## Quarto
 
-Visualizations complete.
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
-#### **Milestone #4 Details**
+## Running Code
 
-Please submit an Rmd or Qmd and publish an html file on RPubs with the following:
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
-1.  Final datasets for creation of visualization
+```{r}
+1 + 1
+```
 
-    -   Join all datasets together
+You can add options to executable code like this
 
-    -   Calculate any remaining data elements needed for analysis
+```{r}
+#| echo: false
+2 * 2
+```
 
-    -   Show code used to create joined dataset, but please do not print full data frame output (showing data structure with `str()` is okay)
-
-2.  Visualizations (at least one per group member)
-
-    -   One print quality table as requested in scenario
-
-    -   One print quality plot or chart as requested in scenario
-
-    -   For groups of 3, one additional print quality table or plot of your choice (can support the requested data in the scenario, or answer a different question using the same data sources)
-
-3.  For each visual, include
-
-    -   Code used to generate visual
-
-    -   Legend (if necessary)
-
-    -   1-2 sentence interpretation
-
-    -   NOTE:
-
-        -   Please make sure the visual can stand-alone, meaning it includes enough information in title, legend, and footnote so that a person who sees only the visualization could understand what is being presented.
-
-        -   Please also make sure column names, axis labels, and any other labels are meaningful and not just the name of the variable (ex: "County" rather than "county_name")
-
-4.  Html file that is professionally prepared for presentation and published to RPubs
-
-    -   Only the necessary information is in the output (e.g., suppress entire data frame outputs but showing data structure with `str()` is okay.
-
-    -   Code used to import and clean data (milestones 2 and 3) can be included in the rmd/qmd but please use the option include=FALSE in order to prevent the code and any output from. Code chunk would look like `{r chunk_name, include=FALSE}`{style="font-family: Monaco, Menlo, Consolas, \"Courier New\", monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;"}
-
-    -   Utilize `warning=FALSE`{style="font-family: Monaco, Menlo, Consolas, \"Courier New\", monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;"} and `message=FALSE`{style="font-family: Monaco, Menlo, Consolas, \"Courier New\", monospace; font-size: 0.75rem; border-radius: 6px; background-color: rgb(242, 244, 244); border: 1px solid rgb(232, 234, 236); padding: 0.125rem 0.25rem; color: rgb(199, 31, 35); text-size-adjust: auto;"} to suppress any warnings/messages that may be displaying from any chunks
-
-    -   For this milestone please make sure code for visualizations are included in the final file. Show your work by "echoing" code used in Rmd/Qmd file to create your tables and graphs. \`\`\`{r, echo = TRUE} in code chunk preferences.
-
-    -   Use headers and sub headers to create an organized document
-
-    -   Make sure you commit and push your rsconnect folder! [Read more details here.](https://docs.google.com/document/d/1JSg5JUEI3JDD_rPAlAaVPno0MlUGQ6W_cyBvn6Ud1xs/edit?usp=sharing)
+The `echo: false` option disables the printing of code (only output is displayed).
