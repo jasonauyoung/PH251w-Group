@@ -20,7 +20,89 @@ Please submit an Rmd or Qmd and publish an html file on RPubs with the following
 
     -   Show code used to create joined dataset, but please do not print full data frame output (showing data structure with `str()` is okay)
 
-2.  Visualizations (at least one per group member)
+```{r}
+library(tidyverse)
+library(janitor)
+library(dplyr)
+```
+
+```{r}
+ca_pop <- read_csv("ca_pop_2023.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_CA <- read_csv("sim_novelid_CA.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+sim_LA <- read_csv("sim_novelid_LACounty.csv", 
+                   na = c("NA", "N/A", "", "null", "-"))
+
+sim_CA <- sim_CA %>% clean_names()
+sim_LA <- sim_LA %>% clean_names()
+
+sim_LA <- sim_LA %>%
+  rename(dt_diagnosis = dt_dx,
+    age_cat = age_category,
+    race_ethnicity = race_eth,
+    new_infections = dx_new,
+    cumulative_infected = infected_cumulative,
+    new_unrecovered = unrecovered_new,
+    cumulative_unrecovered = unrecovered_cumulative,
+    new_severe = severe_new,
+    cumulative_severe = severe_cumulative)
+
+sim_CA <- sim_CA %>%
+  mutate(dt_diagnosis = as.Date(dt_diagnosis))
+
+sim_LA <- sim_LA %>%
+  mutate(dt_diagnosis = as.Date(dt_diagnosis, format = "%d%b%Y"))
+
+sim_CA <- sim_CA %>%
+  mutate(
+    race_ethnicity = case_when(
+      race_ethnicity == 1 ~ "White, Non-Hispanic",
+      race_ethnicity == 2 ~ "Black, Non-Hispanic",
+      race_ethnicity == 3 ~ "American Indian or Alaska Native, Non-Hispanic",
+      race_ethnicity == 4 ~ "Asian, Non-Hispanic",
+      race_ethnicity == 5 ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+      race_ethnicity == 6 ~ "Multiracial (two or more of above races), Non-Hispanic",
+      race_ethnicity == 7 ~ "Hispanic (any race)",
+      TRUE ~ NA_character_))
+
+sim_LA <- sim_LA %>%
+  select(-dt_report)
+
+sim_LA <- sim_LA %>%
+  mutate(county = "Los Angeles County")
+
+ca_pop <- ca_pop %>%
+  rename(race_ethnicity = race7
+    )
+
+ca_pop <- ca_pop %>%
+  mutate(county = paste0(county, " County"))
+    
+
+ca_pop <- ca_pop %>%
+  mutate(
+    race_ethnicity = case_when(
+      race_ethnicity == "WhiteTE NH" ~ "White, Non-Hispanic",
+      race_ethnicity == "Black NH" ~ "Black, Non-Hispanic",
+      race_ethnicity == "AIAN NH" ~ "American Indian or Alaska Native, Non-Hispanic",
+      race_ethnicity == "Asian NH" ~ "Asian, Non-Hispanic",
+      race_ethnicity == "NHPI NH" ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+      race_ethnicity == "MR NH" ~ "Multiracial (two or more of above races), Non-Hispanic",
+      race_ethnicity == "Hispanic" ~ "Hispanic (any race)",
+      TRUE ~ NA_character_))
+
+combined_data <- bind_rows(sim_CA, sim_LA, ca_pop)
+
+```
+
+```{r}
+ca_pop <- ca_pop %>%
+  mutate(county = paste0(county, " County"))
+ 
+```
+
+1.  Visualizations (at least one per group member)
 
     -   One print quality table as requested in scenario
 
@@ -28,7 +110,7 @@ Please submit an Rmd or Qmd and publish an html file on RPubs with the following
 
     -   For groups of 3, one additional print quality table or plot of your choice (can support the requested data in the scenario, or answer a different question using the same data sources)
 
-3.  For each visual, include
+2.  For each visual, include
 
     -   Code used to generate visual
 
@@ -42,7 +124,7 @@ Please submit an Rmd or Qmd and publish an html file on RPubs with the following
 
         -   Please also make sure column names, axis labels, and any other labels are meaningful and not just the name of the variable (ex: "County" rather than "county_name")
 
-4.  Html file that is professionally prepared for presentation and published to RPubs
+3.  Html file that is professionally prepared for presentation and published to RPubs
 
     -   Only the necessary information is in the output (e.g., suppress entire data frame outputs but showing data structure with `str()` is okay.
 
