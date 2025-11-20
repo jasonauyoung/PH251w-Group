@@ -261,6 +261,8 @@ data_dictionary <- tibble(
     "Proportion of new severe cases among all new infections."
   )
 )
+
+print(data_dictionary)
 ```
 
 ```{r}
