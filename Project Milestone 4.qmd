@@ -20,13 +20,13 @@ Please submit an Rmd or Qmd and publish an html file on RPubs with the following
 
     -   Show code used to create joined dataset, but please do not print full data frame output (showing data structure with `str()` is okay)
 
-```{r}
+```{r libraries, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(janitor)
 library(dplyr)
 ```
 
-```{r}
+```{r chunk_name, include=FALSE}
 ca_pop <- read_csv("ca_pop_2023.csv", 
                    na = c("NA", "N/A", "", "null", "-"))
 sim_CA <- read_csv("sim_novelid_CA.csv", 
@@ -92,17 +92,20 @@ ca_pop <- ca_pop %>%
       race_ethnicity == "Hispanic" ~ "Hispanic (any race)",
       TRUE ~ NA_character_))
 
-combined_data <- bind_rows(sim_CA, sim_LA, ca_pop)
+combined_data <- bind_rows(sim_CA, sim_LA)
 
 ```
 
 ```{r}
-ca_pop <- ca_pop %>%
-  mutate(county = paste0(county, " County"))
- 
+str(sim_CA)
+str(sim_LA)
+str(combined_data)
+str(ca_pop)
 ```
 
-1.  Visualizations (at least one per group member)
+1.  
+
+2.  Visualizations (at least one per group member)
 
     -   One print quality table as requested in scenario
 
@@ -110,7 +113,7 @@ ca_pop <- ca_pop %>%
 
     -   For groups of 3, one additional print quality table or plot of your choice (can support the requested data in the scenario, or answer a different question using the same data sources)
 
-2.  For each visual, include
+3.  For each visual, include
 
     -   Code used to generate visual
 
@@ -124,7 +127,7 @@ ca_pop <- ca_pop %>%
 
         -   Please also make sure column names, axis labels, and any other labels are meaningful and not just the name of the variable (ex: "County" rather than "county_name")
 
-3.  Html file that is professionally prepared for presentation and published to RPubs
+4.  Html file that is professionally prepared for presentation and published to RPubs
 
     -   Only the necessary information is in the output (e.g., suppress entire data frame outputs but showing data structure with `str()` is okay.
 
@@ -137,3 +140,86 @@ ca_pop <- ca_pop %>%
     -   Use headers and sub headers to create an organized document
 
     -   Make sure you commit and push your rsconnect folder! [Read more details here.Links to an external site.](https://docs.google.com/document/d/1JSg5JUEI3JDD_rPAlAaVPno0MlUGQ6W_cyBvn6Ud1xs/edit?usp=sharing)
+
+```{r}
+ca_pop_collapsed <- ca_pop %>%
+  mutate(age_cat = case_when(
+    age_cat %in% c("0-4", "5-11", "12-17") ~ "0-17",
+    age_cat == "18-49" ~ "18-49",
+    age_cat == "50-64" ~ "50-64",
+    age_cat == "65+"   ~ "65+",
+    TRUE ~ NA_character_
+  )) %>%
+  group_by(county, health_officer_region, sex, race_ethnicity, age_cat) %>%
+  summarise(pop = sum(pop), .groups = "drop")
+
+```
+
+```{r}
+str(ca_pop_collapsed)
+```
+
+```{r}
+combined_data <- combined_data %>% select(-time_int)
+```
+
+```{r}
+combined_data <- combined_data %>%
+  left_join(ca_pop_collapsed,
+            by = c("county", "age_cat", "sex", "race_ethnicity"))
+str(combined_data)
+```
+
+```{r}
+combined_data <- combined_data %>%
+  mutate(
+    rate_infection = (new_infections / pop) * 100000,
+    rate_unrecovered = (new_unrecovered / pop) * 100000,
+    rate_severe = (new_severe / pop) * 100000,
+    rate_cum_infection = (cumulative_infected / pop) * 100000,
+    rate_cum_unrecovered = (cumulative_unrecovered / pop) * 100000,
+    rate_cum_severe = (cumulative_severe / pop) * 100000)
+str(combined_data)
+```
+
+```{r}
+combined_data <- combined_data %>%
+  mutate(across(starts_with("rate"), ~ round(.x, 2)))
+
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+
+# Filter Bay Area + create <65 group
+bay_data <- combined_data %>%
+  filter(health_officer_region == "Bay Area") %>% 
+  mutate(age_group = ifelse(age_cat == "65+", "65+", "<65"))
+
+# Aggregate across sex and race
+bay_summary <- bay_data %>%
+  group_by(dt_diagnosis, age_group) %>% 
+  summarise(
+    new_infections = sum(new_infections, na.rm = TRUE),
+    pop = sum(pop, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(incidence_rate = (new_infections / pop) * 100000)
+
+# Plot
+ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, color = age_group)) +
+  geom_line(linewidth = 1.1) +
+  scale_color_manual(values = c("65+" = "blue", "<65" = "green"),
+                     name = "Age Group") +
+  labs(
+    title = "Weekly Incidence Rate of Infection in the Bay Area",
+    subtitle = "Comparison between adults 65+ and those under 65 (all races and sexes)",
+    x = "Week of Diagnosis",
+    y = "Incidence Rate per 100,000 Population" 
+    ) + 
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.position = "bottom"
+  )
+```
