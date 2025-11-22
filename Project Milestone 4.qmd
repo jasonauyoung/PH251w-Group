@@ -223,3 +223,5 @@ ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, color = age_group)
     legend.position = "bottom"
   )
 ```
+
+For the first figure, we plotted the weekly incidence rate of the disease in the Bay Area, comparing populations aged 65+ versus those under 65, across all races and sexes.
