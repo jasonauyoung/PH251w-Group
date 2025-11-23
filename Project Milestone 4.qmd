@@ -24,6 +24,9 @@ Please submit an Rmd or Qmd and publish an html file on RPubs with the following
 library(tidyverse)
 library(janitor)
 library(dplyr)
+library(knitr)
+install.packages("scales")
+library(scales)
 ```
 
 ```{r chunk_name, include=FALSE}
@@ -225,3 +228,35 @@ ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, color = age_group)
 ```
 
 For the first figure, we plotted the weekly incidence rate of the disease in the Bay Area, comparing populations aged 65+ versus those under 65, across all races and sexes.
+
+```{r}
+
+bay_area_counties <- c(
+  "Alameda County", "Contra Costa County", "Marin County", "Napa County", "Monterey County", "San Benito County", "San Francisco County", "San Mateo County", "Santa Clara County", "Santa Cruz County", "Solano County", "Sonoma County")
+
+bay_area_table <- combined_data %>%
+  filter(county %in% bay_area_counties) %>%
+  group_by(county) %>% 
+  summarise(
+    total_cases = sum(new_infections, na.rm = TRUE),
+    total_population = sum(pop, na.rm = TRUE)
+  ) %>%
+  mutate(
+    incidence_per_100k = (total_cases / total_population) * 100000
+  ) %>%
+  mutate(
+    total_cases = comma(total_cases),
+    total_population = comma(total_population),
+    incidence_per_100k = comma(round(incidence_per_100k, 1))
+  ) %>%
+  arrange(county)
+
+kable(
+  bay_area_table,
+  col.names = c("County", "Total Cases", "Total Population", "Incidence per 100,000"),
+  align = "c",
+  caption = "Incidence rate per 100,000 in Bay Area counties"
+)
+```
+
+This table summarizes the total number of new infections, population size, and incidence rates across Bay Area counties. By comparing incidence per 100,000 residents, it shows which counties are experiencing higher relative infection burdens within the region.

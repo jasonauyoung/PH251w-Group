@@ -113,7 +113,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"scales"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sim_CA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -331,6 +334,129 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>For the first figure, we plotted the weekly incidence rate of the disease in the Bay Area, comparing populations aged 65+ versus those under 65, across all races and sexes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bay_area_counties <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Alameda County"</span>, <span class="st">"Contra Costa County"</span>, <span class="st">"Marin County"</span>, <span class="st">"Napa County"</span>, <span class="st">"Monterey County"</span>, <span class="st">"San Benito County"</span>, <span class="st">"San Francisco County"</span>, <span class="st">"San Mateo County"</span>, <span class="st">"Santa Clara County"</span>, <span class="st">"Santa Cruz County"</span>, <span class="st">"Solano County"</span>, <span class="st">"Sonoma County"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>bay_area_table <span class="ot">&lt;-</span> combined_data <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(county <span class="sc">%in%</span> bay_area_counties) <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> <span class="fu">sum</span>(new_infections, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_population =</span> <span class="fu">sum</span>(pop, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">incidence_per_100k =</span> (total_cases <span class="sc">/</span> total_population) <span class="sc">*</span> <span class="dv">100000</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> <span class="fu">comma</span>(total_cases),</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_population =</span> <span class="fu">comma</span>(total_population),</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">incidence_per_100k =</span> <span class="fu">comma</span>(<span class="fu">round</span>(incidence_per_100k, <span class="dv">1</span>))</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(county)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  bay_area_table,</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"County"</span>, <span class="st">"Total Cases"</span>, <span class="st">"Total Population"</span>, <span class="st">"Incidence per 100,000"</span>),</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">align =</span> <span class="st">"c"</span>,</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Incidence rate per 100,000 in Bay Area counties"</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Incidence rate per 100,000 in Bay Area counties</caption>
+<colgroup>
+<col style="width: 28%">
+<col style="width: 17%">
+<col style="width: 23%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">County</th>
+<th style="text-align: center;">Total Cases</th>
+<th style="text-align: center;">Total Population</th>
+<th style="text-align: center;">Incidence per 100,000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Alameda County</td>
+<td style="text-align: center;">149,041</td>
+<td style="text-align: center;">51,337,147</td>
+<td style="text-align: center;">290.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Contra Costa County</td>
+<td style="text-align: center;">103,042</td>
+<td style="text-align: center;">35,542,616</td>
+<td style="text-align: center;">289.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Marin County</td>
+<td style="text-align: center;">24,318</td>
+<td style="text-align: center;">7,897,064</td>
+<td style="text-align: center;">307.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Monterey County</td>
+<td style="text-align: center;">44,136</td>
+<td style="text-align: center;">13,530,756</td>
+<td style="text-align: center;">326.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Napa County</td>
+<td style="text-align: center;">12,673</td>
+<td style="text-align: center;">4,169,004</td>
+<td style="text-align: center;">304.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">San Benito County</td>
+<td style="text-align: center;">5,291</td>
+<td style="text-align: center;">2,017,542</td>
+<td style="text-align: center;">262.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">San Francisco County</td>
+<td style="text-align: center;">85,116</td>
+<td style="text-align: center;">26,288,589</td>
+<td style="text-align: center;">323.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">San Mateo County</td>
+<td style="text-align: center;">67,986</td>
+<td style="text-align: center;">23,221,325</td>
+<td style="text-align: center;">292.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Santa Clara County</td>
+<td style="text-align: center;">173,074</td>
+<td style="text-align: center;">59,264,219</td>
+<td style="text-align: center;">292.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Santa Cruz County</td>
+<td style="text-align: center;">26,333</td>
+<td style="text-align: center;">8,156,131</td>
+<td style="text-align: center;">322.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Solano County</td>
+<td style="text-align: center;">84,328</td>
+<td style="text-align: center;">13,849,095</td>
+<td style="text-align: center;">608.9</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Sonoma County</td>
+<td style="text-align: center;">46,322</td>
+<td style="text-align: center;">14,874,606</td>
+<td style="text-align: center;">311.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This table summarizes the total number of new infections, population size, and incidence rates across Bay Area counties. By comparing incidence per 100,000 residents, it shows which counties are experiencing higher relative infection burdens within the region.</p>
 </section>
 </section>
 
