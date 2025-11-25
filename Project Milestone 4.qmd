@@ -151,7 +151,7 @@ combined_data <- combined_data %>%
 
 # VISUALIZATION #1:
 
-For the first figure, we plotted the weekly incidence rate of the disease in the Bay Area, comparing populations aged 65+ versus those under 65, across all races and sexes.
+This figure displays epidemic curves using histograms summarizing the incidence rate of infection in the Bay Area among adults 65+ compared to those under 65. Across the entire observation period, adults 65+ consistently experienced higher incidence rates, indicating a disproportionate burden of disease in older populations, regardless of sex or race.
 
 ```{r}
 library(dplyr)
@@ -170,20 +170,17 @@ bay_summary <- bay_data %>%
     .groups = "drop") %>%
   mutate(incidence_rate = (new_infections / pop) * 100000)
 
-ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, color = age_group)) +
-  geom_line(linewidth = 1.1) +
-  scale_color_manual(values = c("65+" = "blue", "<65" = "green"),
-                     name = "Age Group") +
+ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, fill = age_group)) +
+  geom_col(position = "dodge") +
   labs(
     title = "Weekly Incidence Rate of Infection in the Bay Area",
     subtitle = "Comparison between adults 65+ and those under 65 (all races and sexes)",
     x = "Week of Diagnosis",
-    y = "Incidence Rate per 100,000 Population" 
-    ) + 
-  theme_minimal(base_size = 13) +
-  theme(
-    legend.position = "bottom"
-  )
+    y = "Incidence Rate per 100,000 Population",
+    fill = "Age Group"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
 ```
 
 # VISUALIZATION #2:
