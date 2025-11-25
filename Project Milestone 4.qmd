@@ -153,7 +153,7 @@ combined_data <- combined_data %>%
 
 This figure displays epidemic curves using histograms summarizing the incidence rate of infection in the Bay Area among adults 65+ compared to those under 65. Across the entire observation period, adults 65+ consistently experienced higher incidence rates, indicating a disproportionate burden of disease in older populations, regardless of sex or race.
 
-```{r}
+```{r, echo = TRUE}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
@@ -187,7 +187,7 @@ ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, fill = age_group))
 
 This table summarizes the total number of new infections, population size, and incidence rates across Bay Area counties. By comparing incidence per 100,000 residents, it shows which counties are experiencing higher relative infection burdens within the region.
 
-```{r}
+```{r, echo = TRUE}
 
 bay_area_counties <- c(
   "Alameda County", "Contra Costa County", "Marin County", "Napa County", "Monterey County", "San Benito County", "San Francisco County", "San Mateo County", "Santa Clara County", "Santa Cruz County", "Solano County", "Sonoma County")
@@ -221,7 +221,7 @@ kable(
 
 In the previous two plots, we explored health officer region wide data analyzing health disparities among age groups and counties. In the third and final plot, we built on those existing visualizations to explore the relationships that race/ethnicity may have on the health outcomes of people in the Bay Area. For purposes of visualization, the data are aggregated by month rather than by week.
 
-```{r}
+```{r, echo = TRUE}
 bay_race_plot <- combined_data %>%
   filter(health_officer_region == "Bay Area") %>%
   mutate(month = floor_date(dt_diagnosis, "month")) %>%
