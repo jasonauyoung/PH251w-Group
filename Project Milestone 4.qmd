@@ -1,5 +1,5 @@
 ---
-title: "Project Milestone 4"
+title: "Project Milestone 4 - Group 3 - Juliana, Daniel, Jason"
 format: html
 editor: visual
 ---
