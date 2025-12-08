@@ -6,7 +6,9 @@ editor: visual
 
 ## Quarto
 
-```{r libraries, warning=FALSE, message=FALSE}
+**RPubs link saved/submitted**: `https://rpubs.com/Juliana-Verruck/Project-Milestone-4-2025`
+
+```{r, include=FALSE, message=FALSE}
 library(tidyverse)
 library(janitor)
 library(dplyr)
@@ -15,7 +17,7 @@ install.packages("scales")
 library(scales)
 ```
 
-```{r chunk_name, include=FALSE}
+```{r, include=FALSE}
 ca_pop <- read_csv("ca_pop_2023.csv", 
                    na = c("NA", "N/A", "", "null", "-"))
 sim_CA <- read_csv("sim_novelid_CA.csv", 
@@ -85,7 +87,7 @@ combined_data <- bind_rows(sim_CA, sim_LA)
 
 ```
 
-```{r}
+```{r, include=FALSE}
 ca_pop_collapsed <- ca_pop %>%
   mutate(age_cat = case_when(
     age_cat %in% c("0-4", "5-11", "12-17") ~ "0-17",
@@ -98,18 +100,18 @@ ca_pop_collapsed <- ca_pop %>%
   summarise(pop = sum(pop), .groups = "drop")
 ```
 
-```{r}
+```{r, include=FALSE}
 combined_data <- combined_data %>% select(-time_int)
 ```
 
-```{r}
+```{r, include=FALSE}
 combined_data <- combined_data %>%
   left_join(ca_pop_collapsed,
             by = c("county", "age_cat", "sex", "race_ethnicity"))
 str(combined_data)
 ```
 
-```{r}
+```{r, include=FALSE}
 combined_data <- combined_data %>%
   mutate(
     rate_infection = (new_infections / pop) * 100000,
@@ -121,7 +123,7 @@ combined_data <- combined_data %>%
 str(combined_data)
 ```
 
-```{r}
+```{r, include=FALSE}
 combined_data <- combined_data %>%
   mutate(across(starts_with("rate"), ~ round(.x, 2)))
 ```
@@ -130,7 +132,7 @@ combined_data <- combined_data %>%
 
 This figure displays epidemic curves using histograms summarizing the incidence rate of infection in the Bay Area among adults 65+ compared to those under 65. Across the entire observation period, adults 65+ consistently experienced higher incidence rates, indicating a disproportionate burden of disease in older populations, regardless of sex or race.
 
-```{r}
+```{r, echo=FALSE}
 bay_data <- combined_data %>%
   filter(health_officer_region == "Bay Area") %>% 
   mutate(age_group = ifelse(age_cat == "65+", "65+", "<65"))
@@ -160,7 +162,7 @@ ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, fill = age_group))
 
 This table summarizes the total number of new infections, population size, and incidence rates across Bay Area counties. By comparing incidence per 100,000 residents, it shows which counties are experiencing higher relative infection burdens within the region.
 
-```{r, echo = TRUE}
+```{r, echo=FALSE}
 
 bay_area_counties <- c(
   "Alameda County", "Contra Costa County", "Marin County", "Napa County", "Monterey County", "San Benito County", "San Francisco County", "San Mateo County", "Santa Clara County", "Santa Cruz County", "Solano County", "Sonoma County")
@@ -194,7 +196,7 @@ kable(
 
 In the previous two plots, we explored health officer region wide data analyzing health disparities among age groups and counties. In the third and final plot, we built on those existing visualizations to explore the relationships that race/ethnicity may have on the health outcomes of people in the Bay Area. For purposes of visualization, the data are aggregated by month rather than by week.
 
-```{r, echo = TRUE}
+```{r, echo=FALSE}
 bay_race_plot <- combined_data %>%
   filter(health_officer_region == "Bay Area") %>%
   mutate(month = floor_date(dt_diagnosis, "month")) %>%
@@ -228,10 +230,20 @@ ggplot(bay_race_plot, aes(x = month, y = incidence_per_100k, fill = race_ethnici
   theme(legend.position = "bottom")
 ```
 
-**RPubs link saved/submitted**: `https://rpubs.com/Juliana-Verruck/Project-Milestone-4-2025`
-
 **Problem Statement**
 
 In order to have effective infectious disease surveillance depends on the ability to integrate data from different sources, correcting inconsistencies, and providing quality insights from the collected data. In this project, we worked with three simulated datasets that represent morbidity in California, morbidity specifically to Los Angeles counties, and California population estimates. These datasets all provide components of the same infectious outbreak, but they were all formatted differently. For example, different variable names, inconsistent formatting, and mismatched demographic information. This typically happens as a result of data being collected by different agencies, systems, or having different documentation standards. Due to this, to do meaningful analysis, all of the datasets require extensive cleaning and coding. Extensive cleaning of the dataset includes: having unified column names, recoding demographic categories, aligning temporal variables, etc, to allow the datasets to combine into a single statewide dataset for the team to do meaningful analysis. 
 
 While the initial goal was to conduct a statewide assessment, our team ultimately selected the Bay Area region as the analytical focus. Our team decided on this due to wanting to simulate a realistic epidemiological scenario, where during a widespread outbreak, oftentimes agencies prioritize regions experiencing early transmission patterns or high population density. The Bay Area tends to be a region where infectious diseases can spread quickly due to the close connections between counties, the diverse population, and the amount of cross traffic that occurs. Narrowing our scope allowed us to dive deeper into the patterns within these specific counties. After cleaning and standardizing the morbidity and population datasets, we were able to calculate incidence rates per 100,000 residents for each county and organize all the data into one clean data sheet. This allowed us to see how consistent data formatting and cleaning aid public health analysis to have much more accurate data and easier to interpret.
+
+**Results and Interpretation**
+
+We created 3 different visualizations after cleaning and combining our data, exploring incidence rate across age groups, counties, and racial groups, specifically in the Bay Area. 
+
+Our first visualization revealed that adults aged 65 and older consistently experienced much higher incidence rates than individuals under 65. Both the 65+ population and the under 65 population experienced a similar trend with an increase in disease incidence starting from June, then rapidly rising to a peak during September, and then eventually declining to a plateau after October. However, a key difference in magnitude was observed when stratifying by age. The 65+ population had an infection rate almost twice as much as the under 65 population during peak incidence. This indicates disparities in age as older adults were more affected, potentially due to biological differences between the groups, such as increased susceptibility in the older population. This trend emphasizes the need for intervention and prevention focused on older populations living in highly dense metropolitan areas such as the Bay Area. (See Figure 1)
+
+When stratifying by geography, the incidence rate showed a generally uniform distribution across different counties in the Bay Area, with the exception of one outlier, Solano County. Solano County had an incidence rate of 608.9 per 100,000, which is much higher than the other counties in the Bay Area which had incidence rates between 250 and 350 per 100,000. This may suggest a potential localized effect or variations in practices. (See Figure 2)
+
+We also looked at how the data was distributed in regards to race and ethnicity. All groups showed the same general pattern, mirroring the curve mentioned in the first visualization, but the incidence rates varied significantly when stratified by race. The groups that consistently had the highest incidence rates across the surveillance period were the American Indian or Alaska Native, black, and white populations, while Native Hawaiian or Pacific Islander and Hispanic populations had slightly lower rates comparatively. Additionally, Asian and Multiracial populations generally experienced the lowest rates among all racial groups. These differences may reflect different structural or social factors associated with the Bay Area, such as localized racial disparities in health access, etc. (See Figure 3)
+
+Overall, the results show demographic and geographical factors and how it may affect disease distribution. This also highlights the importance of data in identifying populations at increased risk and subsequently informing appropriate interventions to address them.
