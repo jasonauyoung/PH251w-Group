@@ -173,9 +173,9 @@ bay_summary <- bay_data %>%
 ggplot(bay_summary, aes(x = dt_diagnosis, y = incidence_rate, fill = age_group)) +
   geom_col(position = "dodge") +
   labs(
-    title = "Weekly Incidence Rate of Infection in the Bay Area",
+    title = "Monthly Incidence Rate of Infection in the Bay Area",
     subtitle = "Comparison between adults 65+ and those under 65 (all races and sexes)",
-    x = "Week of Diagnosis",
+    x = "Month of Diagnosis",
     y = "Incidence Rate per 100,000 Population",
     fill = "Age Group"
   ) +
